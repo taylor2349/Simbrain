@@ -8,14 +8,38 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Area2D",
+"class": "Animal",
+"language": "GDScript",
+"path": "res://Animal.gd"
+}, {
+"base": "Area2D",
+"class": "Plant",
+"language": "GDScript",
+"path": "res://Plant.gd"
+}, {
+"base": "Node2D",
+"class": "SimWorld",
+"language": "GDScript",
+"path": "res://World.gd"
+}, {
+"base": "Area2D",
+"class": "Thing",
+"language": "GDScript",
+"path": "res://Thing.gd"
+} ]
 _global_script_class_icons={
-
+"Animal": "",
+"Plant": "",
+"SimWorld": "",
+"Thing": ""
 }
 
 [application]
 
 config/name="Simbrain"
+run/main_scene="res://World.tscn"
 config/icon="res://icon.png"
 
 [rendering]
