@@ -1,2 +1,1 @@
-# Simbrain
- Yeah, yeah
+# Simbrain -- A Daring Expediction into the Unknown
