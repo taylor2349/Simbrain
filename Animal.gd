@@ -9,12 +9,12 @@ func _QUALITIES(): #-----------------------------------------------------------
 	# Things that are true of all instances and do not change.
 	pass
 
-var own_class_name = "Animal" # Animals can't ask for other Animals' class name.
+var is_class = "Animal" # Animals can't ask for other Animals' class name.
 var screen_size
-var max_speed = 3.5
-var min_speed = .25
-var max_acceleration = .5
-var max_rotation = PI/2
+var max_speed = 200
+var min_speed = 20
+var max_acceleration = 30
+var max_rotation = PI/3
 var starvation = 100000000   # No starvation yet
 var max_munch_time = 25   # No. frames it takes to eat (later, will vary)
 
@@ -23,9 +23,9 @@ func _STATE(): #---------------------------------------------------------------
 	# Things that vary with both instance and time. (Move to state object?)
 	pass
 	
-var speed = 0
-var direction = 0
-var velocity   # Derived from speed and direction
+var speed = 0		# Set in the code
+var direction = 0	# Ditto
+var velocity   		# Derived from speed and direction
 var facing   # Not used yet. Animal always faces current direction
 var eating = false
 var hunger = 0
@@ -76,6 +76,14 @@ func _process(delta):
 func _______________________SIGNALS():
 	pass
 
+func _on_Animal_area_entered(area):
+	# Determine the class of the contacted object (area)
+	# Branch based on that class
+	if area.is_class == "Animal":
+		print("I'm avoiding that animal.")
+	elif area.is_class == "Plant":
+		print("I'm eating that plant.")
+	
 # This signal is not triggering properly.
 # It appears rarely and says it saw the  
 func _on_VisibleRange_area_entered(area):
@@ -110,7 +118,11 @@ func _______________________MOVEMENT():
 	pass
 
 func move_forward(delta):
-	wrap_on_the_boundaries()  # Before or after collision?
+	update_the_velocity()
+	position += velocity * delta
+	wrap_on_the_boundaries()
+	
+	
 ##	var collision = move_and_collide(velocity, delta)
 #	if collision:
 #		var collider = collision.collider
@@ -206,7 +218,9 @@ velocity is derived from them. Sprite always faces the direction in which
 the Animal is moving.
 
 ---- ISSUES
-If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
+[] If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
+[] Should I include delta in: position += velocity * delta? 
+
 
 ---- DONE
 [x] Animal has a velocity vector and moves based on that.
@@ -220,7 +234,9 @@ If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
 [x] Initialize velocity directly on speed and direction
 [x] Animal gets nutrition and will starve if it doesn't.
 
+
 ---- DOING
+
 ==== PROJECT: Install the vision system
 [o] STATUS: 
 	Unable to screen out the Animal's own by via Exception list.
@@ -229,17 +245,17 @@ If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
 	I currently have a Collision2D object, SightCircle, handling detection
 		Can I move the detection up into Animal itself? 
 		  
-[o] Figure out the right kind of object to handle events in this area
-[x] Add a round collision object to Animal with radius = vision length
-[o] Use a signal to alert the Animal of an entry into the field
+[x] Figure out the right kind of object to handle events in this area
+[] Add a round collision object to Animal with radius = vision length
+[] Use a signal to alert the Animal of an entry into the field
 	At the moment, I'm using a method to ask for all the contacts.
 	Next step is to switch to a signal. 
 [] Eliminate all hits that lie outside the animal's cone of vision
 
-[] LATER: Convert to a triangular collision shape. Simpler & faster. 
 	 
 
 ---- TODO
+[] LATER: Convert to a triangular collision shape. Simpler & faster. 
 [] Animals ignore plants if they aren't very hungry
 	-- If they hit them, they treat them like an inert object & turn away 
 [] Constrain rotation using modulo & not 4 lines of code.

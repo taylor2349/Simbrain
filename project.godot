@@ -42,6 +42,21 @@ config/name="Simbrain"
 run/main_scene="res://World.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+gdscript/warnings/unused_variable=false
+gdscript/warnings/unused_argument=false
+
+[display]
+
+window/size/height=576
+window/size/always_on_top=true
+
+[physics]
+
+common/physics_fps=10
+
 [rendering]
 
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"

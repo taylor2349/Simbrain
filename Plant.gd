@@ -4,7 +4,7 @@
 class_name Plant
 extends Area2D
 
-var my_class_name = "Plant"
+var is_class = "Plant"
 var center = Vector2()
 var radius = 7
 var color = ColorN("forest green")

@@ -8,8 +8,8 @@ var plant = preload("res://Plant.tscn")
 var animal = preload("res://Animal.tscn")
 var thing = preload("res://Thing.tscn")
 
-var plant_count = 10
-var animal_count = 5
+var plant_count = 50
+var animal_count = 50
 var thing_count = 0
 var screen_size
 var screen_inset = 10
@@ -39,7 +39,7 @@ func _______________________CREATION():
 func create_the_world():
 	create_the_map()
 	create_the_things()
-#	create_the_plants()
+	create_the_plants()
 	create_the_animals()
 
 func create_the_map():
@@ -52,14 +52,14 @@ func create_the_things():
 	# Things are all the non-living entities 
 	pass
 	
-#func create_the_plants():
-#	# TODO: Each Plant type can grow only in certain terrains 
-#	var edge = screen_inset
-#	for _i in range(plant_count):
-#		var new_plant = plant.instance()
-#		new_plant.position = pick_a_random_location()
-#		add_child(new_plant)
-#		update()
+func create_the_plants():
+	# TODO: Each Plant type can grow only in certain terrains 
+	var edge = screen_inset
+	for _i in range(plant_count):
+		var new_plant = plant.instance()
+		new_plant.position = pick_a_random_location()
+		add_child(new_plant)
+		update()
 		
 func create_the_animals():
 	# TODO: Each Animal type can be "born" only in certain terrains
