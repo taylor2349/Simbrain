@@ -11,12 +11,12 @@ func _QUALITIES(): #-----------------------------------------------------------
 
 var is_class = "Animal" # Animals can't ask for other Animals' class name.
 var screen_size
-var max_speed = 200
+var max_speed = 150
 var min_speed = 20
 var max_acceleration = 30
 var max_rotation = PI/3
 var starvation = 100000000   # No starvation yet
-var max_munch_time = 25   # No. frames it takes to eat (later, will vary)
+var max_munch_time =40   # No. frames it takes to eat (later, will vary)
 
 
 func _STATE(): #---------------------------------------------------------------
@@ -34,20 +34,16 @@ var munch_time = 0
 
 func _ready():
 	screen_size  = get_viewport_rect().size
-	# BUG ---- THIS COLLISION EXCEPTION DOESN'T WORK <<<<<<<<<<<<<<<<<<<<<<<
-	# add_collision_exception_with(self)
 	change_speed(rand_range(min_speed, max_speed))
 	change_direction(rand_range(0, 2*PI))
 
 
 func _process(delta):
-	# Scan for visible objects
-	# (Move this down into VisibleRange object.)
-	# TODO: This will be convered into signals that trigger reactions,
-	#	using the same logic as collisions do. 
+	# Scan for visible objects: use signals to trigger reactions.
 #	var visible_objects = $VisibleRange.scan_for_objects()
 
 	# Look around for objects in view
+	
 	
 	# Update bodily states
 	hunger += 1
@@ -76,18 +72,16 @@ func _process(delta):
 func _______________________SIGNALS():
 	pass
 
-func _on_Animal_area_entered(area):
-	# Determine the class of the contacted object (area)
-	# Branch based on that class
-	if area.is_class == "Animal":
-		print("I'm avoiding that animal.")
-	elif area.is_class == "Plant":
-		print("I'm eating that plant.")
+func _on_Animal_area_entered(entity):
+	if entity.is_class == "Animal":
+		react_to_an_animal(entity)
+	elif entity.is_class == "Plant":
+		react_to_a_plant(entity)
 	
 # This signal is not triggering properly.
 # It appears rarely and says it saw the  
-func _on_VisibleRange_area_entered(area):
-	print("I see a ", area.name)
+func _on_VisibleRange_area_entered(entity):
+	print("I see a ", entity.name)
 
 
 #------------------------------------------------------------------------------	
@@ -96,19 +90,21 @@ func _on_VisibleRange_area_entered(area):
 func _______________________REACTIONS():
 	pass
 
-func react_to_a_plant(collision):
-	# Insert a hunger condition. Don't stop if pretty full. If hit, go around.
-	start_eating(collision)
+func react_to_a_plant(entity):
+	# TODO: Eat only if hungry. If run into plant, go around.
+	start_eating(entity)
 
 
-func react_to_an_animal(collision):
-	change_speed(max_speed/3)
-	pass
+func react_to_an_animal(entity):
+	if entity.name == "Animal": # Filter out collisions with self
+		return
+	change_speed(min_speed * 2)
+	change_direction(null)
+#	change_speed(max_speed/4)
 
 	
-func react_to_a_thing(collision):
-#	print("  ----  I hit something...")
-	pass
+func react_to_a_thing(entity):
+	print("  ----  I hit something...")
 
 
 #------------------------------------------------------------------------------	
@@ -121,17 +117,6 @@ func move_forward(delta):
 	update_the_velocity()
 	position += velocity * delta
 	wrap_on_the_boundaries()
-	
-	
-##	var collision = move_and_collide(velocity, delta)
-#	if collision:
-#		var collider = collision.collider
-#		if collider is KinematicBody2D: # Avoid self-reference
-#			react_to_an_animal(collision)
-#		elif collider is Plant: # All other types use the class directly.
-#			react_to_a_plant(collision)
-#		else:
-#			react_to_a_thing(collision)
 	
 
 func change_speed(new_speed):
@@ -185,13 +170,10 @@ func wrap_on_the_boundaries():
 func _______________________FUNCTIONS():
 	pass
 	
-func start_eating(collision):
-#	var collider
-#	var location
+func start_eating(entity):
 	eating = true
 	munch_time = 0
-	var collider = collision.collider
-	var location = collider.position
+	var location = entity.position
 	
 	# Set direction of motion and have sprite look that way. 
 	# TODO -- Turn this into a call to change_direction.
@@ -220,6 +202,7 @@ the Animal is moving.
 ---- ISSUES
 [] If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
 [] Should I include delta in: position += velocity * delta? 
+[] BUG: Animals overshoot when they collide with something. The go over it. 
 
 
 ---- DONE
