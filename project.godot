@@ -28,12 +28,24 @@ _global_script_classes=[ {
 "class": "Thing",
 "language": "GDScript",
 "path": "res://Thing.gd"
+}, {
+"base": "Area2D",
+"class": "Touch",
+"language": "GDScript",
+"path": "res://Touch.gd"
+}, {
+"base": "Area2D",
+"class": "Vision",
+"language": "GDScript",
+"path": "res://Vision.gd"
 } ]
 _global_script_class_icons={
 "Animal": "",
 "Plant": "",
 "SimWorld": "",
-"Thing": ""
+"Thing": "",
+"Touch": "",
+"Vision": ""
 }
 
 [application]

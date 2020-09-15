@@ -10,13 +10,14 @@ func _QUALITIES(): #-----------------------------------------------------------
 	pass
 
 var is_class = "Animal" # Animals can't ask for other Animals' class name.
+var type = "Animal"
 var screen_size
 var max_speed = 150
 var min_speed = 20
 var max_acceleration = 30
 var max_rotation = PI/3
 var starvation = 100000000   # No starvation yet
-var max_munch_time =40   # No. frames it takes to eat (later, will vary)
+var max_munch_time = 40   # No. frames it takes to eat (later, will vary)
 
 
 func _STATE(): #---------------------------------------------------------------
@@ -34,7 +35,8 @@ var munch_time = 0
 
 func _ready():
 	screen_size  = get_viewport_rect().size
-	change_speed(rand_range(min_speed, max_speed))
+	change_speed(max_speed/2)
+#	change_speed(rand_range(min_speed, max_speed))
 	change_direction(rand_range(0, 2*PI))
 
 
@@ -72,16 +74,28 @@ func _process(delta):
 func _______________________SIGNALS():
 	pass
 
-func _on_Animal_area_entered(entity):
-	if entity.is_class == "Animal":
-		react_to_an_animal(entity)
-	elif entity.is_class == "Plant":
-		react_to_a_plant(entity)
-	
-# This signal is not triggering properly.
-# It appears rarely and says it saw the  
-func _on_VisibleRange_area_entered(entity):
-	print("I see a ", entity.name)
+
+
+
+func _on_Touch_area_entered(area):
+	print("I'm touched.") 
+	pass # Replace with function body.
+
+# THESE will become signals from their individual senses
+#func _on_skin_area_entered(area):
+#	print("Not me!")
+#	var entity = area.get_owner()
+#	if entity.type == "Animal":
+#		print("Animal")
+#		react_to_an_animal(entity)
+#	elif entity.type == "Plant":
+#		print("plant")
+#		react_to_a_plant(entity)
+
+# DELETE; signal now goes to Vision object
+#func _on_visionArea_area_entered(area):
+#	var entity = area.get_owner()
+#	print("I see a ", entity.name)
 
 
 #------------------------------------------------------------------------------	
@@ -100,7 +114,6 @@ func react_to_an_animal(entity):
 		return
 	change_speed(min_speed * 2)
 	change_direction(null)
-#	change_speed(max_speed/4)
 
 	
 func react_to_a_thing(entity):
@@ -203,6 +216,8 @@ the Animal is moving.
 [] If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
 [] Should I include delta in: position += velocity * delta? 
 [] BUG: Animals overshoot when they collide with something. The go over it. 
+	>> Its outer shape is colliding with plants. 
+	>> How do I get it to respond differently to different collision shapes?
 
 
 ---- DONE
@@ -219,6 +234,9 @@ the Animal is moving.
 
 
 ---- DOING
+[x] Recover lost code up to the point of adding vision
+[x] Add a second collision area to Animal for vision
+[] BUG: Animals now stop briefly each time they make a random turn
 
 ==== PROJECT: Install the vision system
 [o] STATUS: 
@@ -247,4 +265,3 @@ the Animal is moving.
 [] Animal reflects off barriers
 
 """
-
