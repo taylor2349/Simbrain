@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Animal.gd" type="Script" id=1]
 [ext_resource path="res://Animal 3.png" type="Texture" id=2]
 [ext_resource path="res://Touch.gd" type="Script" id=3]
 [ext_resource path="res://Vision.gd" type="Script" id=4]
+
+[sub_resource type="CircleShape2D" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 60.9704
@@ -20,13 +22,18 @@ __meta__ = {
 [node name="AnimalSprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 
+[node name="BodyArea" type="CollisionShape2D" parent="."]
+shape = SubResource( 3 )
+
 [node name="Vision" type="Area2D" parent="."]
+monitorable = false
 script = ExtResource( 4 )
 
 [node name="VisionShape" type="CollisionShape2D" parent="Vision"]
 shape = SubResource( 1 )
 
 [node name="Touch" type="Area2D" parent="."]
+monitorable = false
 script = ExtResource( 3 )
 
 [node name="TouchShape" type="CollisionShape2D" parent="Touch"]

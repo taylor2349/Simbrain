@@ -2,15 +2,17 @@
 # VISION
 #==============================================================================
 # Detects entities and identifies them. 
-# Sends an "I see" message to Animal
+# Sends an "I see" message up to owning Animal
 class_name Vision
 extends Area2D
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	monitorable = false # Sensory areas aren't real objects
+
 
 func _on_Vision_area_entered(area):
-	pass
-#	print("I see!")
+	var parent = get_parent()
+	if area.name != parent.name:
+		print(parent.name, " sees ", area.name)
+		parent.respond_to_vision(area)
 	

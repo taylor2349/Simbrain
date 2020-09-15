@@ -8,8 +8,8 @@ var plant = preload("res://Plant.tscn")
 var animal = preload("res://Animal.tscn")
 var thing = preload("res://Thing.tscn")
 
-var plant_count = 50
-var animal_count = 50
+var plant_count = 20
+var animal_count = 20
 var thing_count = 0
 var screen_size
 var screen_inset = 10

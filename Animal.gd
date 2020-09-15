@@ -68,16 +68,23 @@ func _process(delta):
 func _______________________SIGNALS():
 	pass
 
-#func _on_Touch_area_entered(area):
-#	print("I'm touched.") 
-#	pass # Replace with function body.
+# Bodily contact
+func _on_Animal_area_entered(area):
+	print(self.name, " hits ", area.name)
 
+# Touch contact (based on signal in Touch)
 func respond_to_touch(entity):
-	print("Touching ", entity.name)
 	if entity.is_class == "Plant":
-		react_to_a_plant(entity)
+		touching_a_plant(entity)
 	elif entity.is_class == "Animal":
-		react_to_an_animal(entity)
+		touching_an_animal(entity)
+
+# Visual contact (based on signal from Vision)
+func respond_to_vision(entity):
+	if entity.is_class == "Plant":
+		seeing_a_plant(entity)
+	elif entity.is_class == "Animal":
+		seeing_an_animal(entity)
 
 #------------------------------------------------------------------------------	
 # REACTIONS
@@ -85,19 +92,24 @@ func respond_to_touch(entity):
 func _______________________REACTIONS():
 	pass
 
-func react_to_a_plant(entity):
+func touching_a_plant(entity):
 	# TODO: Eat only if hungry. If run into plant, go around.
 	start_eating(entity)
 
 
-func react_to_an_animal(entity):
-	print(">>>>>>> I hit an animal!")
-	change_speed(min_speed * 2)
-	change_direction(null)
+func touching_an_animal(entity):
+	# TODO: Make sure the animal isn't detecting itself.
+	if self.name != entity.name:
+		change_speed(min_speed * 2)
+		change_direction(null)
 
 	
-func react_to_a_thing(entity):
-	print("  ----  I hit something...")
+func seeing_a_plant(plant):
+	print("           Heading for that plant.")
+
+
+func seeing_an_animal(animal):
+	print("           Avoiding that animal.")
 
 
 #------------------------------------------------------------------------------	
@@ -172,9 +184,8 @@ func start_eating(entity):
 	# TODO -- Turn this into a call to change_direction.
 	$AnimalSprite.look_at(location)
 	$AnimalSprite.rotate(PI/2)
-	print("Chowing down.")
 	
-	
+
 func stop_eating():
 	eating = false
 	hunger = 0   # Always gets his fill
@@ -212,14 +223,12 @@ the Animal is moving.
 [x] Start Animal in random direction & random speed
 [x] Initialize velocity directly on speed and direction
 [x] Animal gets nutrition and will starve if it doesn't.
+[x] Recover lost code up to the point of adding vision
+[x] Add a second collision area to Animal for vision
 
 
 ---- DOING
-[x] Recover lost code up to the point of adding vision
-[x] Add a second collision area to Animal for vision
-[] BUG: Doesn't recognize other animals. Filtering out based on *their* shapes.
-	That is, they hit the body and ignore the touch report. 
-	Arghhh!
+[] Animals stop when they detect a plant. Why is that? 
 
 ==== PROJECT: Install the vision system
 [o] STATUS: 
