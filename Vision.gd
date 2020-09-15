@@ -8,8 +8,9 @@ extends Area2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("Vision is ready.")
+	pass
 
 func _on_Vision_area_entered(area):
-	print("I see!")
+	pass
+#	print("I see!")
 	

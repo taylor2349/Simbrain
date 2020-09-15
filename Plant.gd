@@ -3,7 +3,9 @@
 #==============================================================================
 class_name Plant
 extends Area2D
+
 var type = "Plant"
+var is_class = "Plant"
 
 var center = Vector2()
 var radius = 7

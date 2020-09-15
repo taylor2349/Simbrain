@@ -41,12 +41,6 @@ func _ready():
 
 
 func _process(delta):
-	# Scan for visible objects: use signals to trigger reactions.
-#	var visible_objects = $VisibleRange.scan_for_objects()
-
-	# Look around for objects in view
-	
-	
 	# Update bodily states
 	hunger += 1
 	if hunger > starvation:
@@ -74,29 +68,16 @@ func _process(delta):
 func _______________________SIGNALS():
 	pass
 
+#func _on_Touch_area_entered(area):
+#	print("I'm touched.") 
+#	pass # Replace with function body.
 
-
-
-func _on_Touch_area_entered(area):
-	print("I'm touched.") 
-	pass # Replace with function body.
-
-# THESE will become signals from their individual senses
-#func _on_skin_area_entered(area):
-#	print("Not me!")
-#	var entity = area.get_owner()
-#	if entity.type == "Animal":
-#		print("Animal")
-#		react_to_an_animal(entity)
-#	elif entity.type == "Plant":
-#		print("plant")
-#		react_to_a_plant(entity)
-
-# DELETE; signal now goes to Vision object
-#func _on_visionArea_area_entered(area):
-#	var entity = area.get_owner()
-#	print("I see a ", entity.name)
-
+func respond_to_touch(entity):
+	print("Touching ", entity.name)
+	if entity.is_class == "Plant":
+		react_to_a_plant(entity)
+	elif entity.is_class == "Animal":
+		react_to_an_animal(entity)
 
 #------------------------------------------------------------------------------	
 # REACTIONS
@@ -110,8 +91,7 @@ func react_to_a_plant(entity):
 
 
 func react_to_an_animal(entity):
-	if entity.name == "Animal": # Filter out collisions with self
-		return
+	print(">>>>>>> I hit an animal!")
 	change_speed(min_speed * 2)
 	change_direction(null)
 
@@ -192,6 +172,7 @@ func start_eating(entity):
 	# TODO -- Turn this into a call to change_direction.
 	$AnimalSprite.look_at(location)
 	$AnimalSprite.rotate(PI/2)
+	print("Chowing down.")
 	
 	
 func stop_eating():
@@ -236,7 +217,9 @@ the Animal is moving.
 ---- DOING
 [x] Recover lost code up to the point of adding vision
 [x] Add a second collision area to Animal for vision
-[] BUG: Animals now stop briefly each time they make a random turn
+[] BUG: Doesn't recognize other animals. Filtering out based on *their* shapes.
+	That is, they hit the body and ignore the touch report. 
+	Arghhh!
 
 ==== PROJECT: Install the vision system
 [o] STATUS: 
