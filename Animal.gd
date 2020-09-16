@@ -27,7 +27,7 @@ func _STATE(): #---------------------------------------------------------------
 var speed = 0		# Set in the code
 var direction = 0	# Ditto
 var velocity   		# Derived from speed and direction
-var facing   # Not used yet. Animal always faces current direction
+var facing   		# Not used yet. Animal always faces current direction
 var eating = false
 var hunger = 0
 var munch_time = 0
@@ -35,8 +35,7 @@ var munch_time = 0
 
 func _ready():
 	screen_size  = get_viewport_rect().size
-	change_speed(max_speed/2)
-#	change_speed(rand_range(min_speed, max_speed))
+	change_speed(rand_range(min_speed * 2, max_speed))
 	change_direction(rand_range(0, 2*PI))
 
 
@@ -53,9 +52,9 @@ func _process(delta):
 			return   # If still eating, don't move.
 
 	# Throw some random changes into the movement.
-	if rand_range(1, 100) < 2:
+	if rand_range(1, 100) < 3:
 		change_speed(null)
-	if rand_range(1, 100) < 2:
+	if rand_range(1, 100) < 1:
 		change_direction(null)
 		
 	# Make it so.	
@@ -105,11 +104,16 @@ func touching_an_animal(entity):
 
 	
 func seeing_a_plant(plant):
+	# This is first-sighting only. Have to start tracking it now.
 	print("           Heading for that plant.")
+	change_direction(get_angle_to(plant.position))
 
 
 func seeing_an_animal(animal):
+	# This is first-sighting only. Have to start tracking it now.
 	print("           Avoiding that animal.")
+	change_direction(null)
+	change_speed(min_speed * 2)
 
 
 #------------------------------------------------------------------------------	
@@ -125,10 +129,10 @@ func move_forward(delta):
 	
 
 func change_speed(new_speed):
-	if new_speed == null:
+	if new_speed == null: # null = accelerate or decelerate 
 		speed += rand_range(-max_acceleration, max_acceleration)
 	else:
-		speed = new_speed # Entirely new speed
+		speed = new_speed # value = set a new speed
 	speed = clamp(speed, min_speed, max_speed)
 	update_the_velocity()
 	
@@ -147,7 +151,9 @@ func change_direction(requested_direction):
 	elif new_direction >= 2*PI:
 		new_direction -= 2*PI
 		
+		
 	direction = new_direction   # Okay. we accept the new direction
+	print(" Direction = ", direction)
 	update_the_velocity()
 	$AnimalSprite.rotation = direction
 
@@ -183,7 +189,7 @@ func start_eating(entity):
 	# Set direction of motion and have sprite look that way. 
 	# TODO -- Turn this into a call to change_direction.
 	$AnimalSprite.look_at(location)
-	$AnimalSprite.rotate(PI/2)
+#	$AnimalSprite.rotate(PI/4) # No longer need this?
 	
 
 func stop_eating():
@@ -228,7 +234,8 @@ the Animal is moving.
 
 
 ---- DOING
-[] Animals stop when they detect a plant. Why is that? 
+[x] Fix the direction changes. 
+[] BUG: Does not approach plants. When it hits them & eats, does not face them.
 
 ==== PROJECT: Install the vision system
 [o] STATUS: 

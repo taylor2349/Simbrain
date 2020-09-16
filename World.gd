@@ -4,12 +4,15 @@
 class_name SimWorld # May not need this
 extends Node2D
 
+func _______________________PROPERTIES():
+	pass
+
 var plant = preload("res://Plant.tscn")
 var animal = preload("res://Animal.tscn")
 var thing = preload("res://Thing.tscn")
 
-var plant_count = 20
-var animal_count = 20
+var plant_count = 50
+var animal_count = 50
 var thing_count = 0
 var screen_size
 var screen_inset = 10
@@ -27,8 +30,6 @@ func _input(event):
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
 
-#func _process(_delta):
-#	pass
 
 #------------------------------------------------------------------------------
 # CREATION
