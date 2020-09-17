@@ -16,7 +16,6 @@ var animal_count = 50
 var thing_count = 0
 var screen_size
 var screen_inset = 10
-var location = Vector2()
 
 func _ready():
 	randomize()

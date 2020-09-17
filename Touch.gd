@@ -13,7 +13,7 @@ func _ready():
 func _on_Touch_area_entered(area):
 	var parent = get_parent()
 	if area.name != parent.name:
-		print(parent.name, " touches ", area.name)
+		# (parent.name, " touches ", area.name)
 		parent.respond_to_touch(area)
 
 	

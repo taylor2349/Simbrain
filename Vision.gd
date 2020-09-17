@@ -13,6 +13,6 @@ func _ready():
 func _on_Vision_area_entered(area):
 	var parent = get_parent()
 	if area.name != parent.name:
-		print(parent.name, " sees ", area.name)
+		# (parent.name, " sees ", area.name)
 		parent.respond_to_vision(area)
 	

@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Animal.tscn" type="PackedScene" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Bot.gd" type="Script" id=3]
+[ext_resource path="res://Sandbox.gd" type="Script" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 41.1026
+
+[node name="Sandbox" type="Area2D"]
+script = ExtResource( 4 )
+
+[node name="Animal" parent="." instance=ExtResource( 1 )]
+visible = false
+
+[node name="Bot" type="Area2D" parent="."]
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Bot"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot"]
+shape = SubResource( 1 )

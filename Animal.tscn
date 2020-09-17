@@ -5,12 +5,12 @@
 [ext_resource path="res://Touch.gd" type="Script" id=3]
 [ext_resource path="res://Vision.gd" type="Script" id=4]
 
-[sub_resource type="CircleShape2D" id=3]
-
 [sub_resource type="CircleShape2D" id=1]
-radius = 60.9704
 
 [sub_resource type="CircleShape2D" id=2]
+radius = 60.9704
+
+[sub_resource type="CircleShape2D" id=3]
 radius = 9.15364
 
 [node name="Animal" type="Area2D"]
@@ -23,21 +23,21 @@ __meta__ = {
 texture = ExtResource( 2 )
 
 [node name="BodyArea" type="CollisionShape2D" parent="."]
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 
 [node name="Vision" type="Area2D" parent="."]
 monitorable = false
 script = ExtResource( 4 )
 
 [node name="VisionShape" type="CollisionShape2D" parent="Vision"]
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Touch" type="Area2D" parent="."]
 monitorable = false
 script = ExtResource( 3 )
 
 [node name="TouchShape" type="CollisionShape2D" parent="Touch"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 [connection signal="area_entered" from="." to="." method="_on_Animal_area_entered"]
 [connection signal="area_entered" from="Vision" to="Vision" method="_on_Vision_area_entered"]
 [connection signal="area_entered" from="Touch" to="Touch" method="_on_Touch_area_entered"]

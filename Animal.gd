@@ -5,25 +5,20 @@ class_name Animal
 extends Area2D
 
 
-func _QUALITIES(): #-----------------------------------------------------------
-	# Things that are true of all instances and do not change.
+func properties(): #-----------------------------------------------------------
 	pass
 
+# Class properties
 var is_class = "Animal" # Animals can't ask for other Animals' class name.
-var type = "Animal"
 var screen_size
 var max_speed = 150
 var min_speed = 20
 var max_acceleration = 30
-var max_rotation = PI/3
+var max_rotation = PI/2
 var starvation = 100000000   # No starvation yet
 var max_munch_time = 40   # No. frames it takes to eat (later, will vary)
 
-
-func _STATE(): #---------------------------------------------------------------
-	# Things that vary with both instance and time. (Move to state object?)
-	pass
-	
+# Instance Properties	
 var speed = 0		# Set in the code
 var direction = 0	# Ditto
 var velocity   		# Derived from speed and direction
@@ -31,7 +26,6 @@ var facing   		# Not used yet. Animal always faces current direction
 var eating = false
 var hunger = 0
 var munch_time = 0
-
 
 func _ready():
 	screen_size  = get_viewport_rect().size
@@ -69,7 +63,8 @@ func _______________________SIGNALS():
 
 # Bodily contact
 func _on_Animal_area_entered(area):
-	print(self.name, " hits ", area.name)
+	pass
+#	print(self.name, " hits ", area.name)
 
 # Touch contact (based on signal in Touch)
 func respond_to_touch(entity):
@@ -91,29 +86,35 @@ func respond_to_vision(entity):
 func _______________________REACTIONS():
 	pass
 
-func touching_a_plant(entity):
+func touching_a_plant(plant):
 	# TODO: Eat only if hungry. If run into plant, go around.
-	start_eating(entity)
+	change_direction(get_angle_to(plant.position) + PI/2)
+	change_speed(min_speed)
+	start_eating(plant)
 
 
 func touching_an_animal(entity):
 	# TODO: Make sure the animal isn't detecting itself.
 	if self.name != entity.name:
-		change_speed(min_speed * 2)
+		change_speed(max_speed)
 		change_direction(null)
 
 	
 func seeing_a_plant(plant):
 	# This is first-sighting only. Have to start tracking it now.
-	print("           Heading for that plant.")
-	change_direction(get_angle_to(plant.position))
+	# TODO: Why do I have to add PI/2 to get the correct angle???
+	var aim_for = get_angle_to(plant.position)
+	aim_for += PI/2  # TEMP
+	change_direction(aim_for)
+	change_speed(max_speed)
 
 
 func seeing_an_animal(animal):
 	# This is first-sighting only. Have to start tracking it now.
-	print("           Avoiding that animal.")
+	# For now, just slow down and angle off in a new direction. 
+	#print("           Avoiding that animal.")
 	change_direction(null)
-	change_speed(min_speed * 2)
+	change_speed(min_speed)
 
 
 #------------------------------------------------------------------------------	
@@ -153,8 +154,8 @@ func change_direction(requested_direction):
 		
 		
 	direction = new_direction   # Okay. we accept the new direction
-	print(" Direction = ", direction)
 	update_the_velocity()
+	## TODO: Get rid of this direct access 
 	$AnimalSprite.rotation = direction
 
 
@@ -163,7 +164,7 @@ func update_the_velocity():
 	velocity = velocity.rotated(direction)
 
 
-# This is strictly temporary. The terrain (sea water) will take care of this. 
+# Code is strictly temporary. The terrain (sea water) will take care of this. 
 func wrap_on_the_boundaries():
 	if position.x <= 0:
 		position.x = screen_size.x
@@ -184,18 +185,18 @@ func _______________________FUNCTIONS():
 func start_eating(entity):
 	eating = true
 	munch_time = 0
-	var location = entity.position
-	
-	# Set direction of motion and have sprite look that way. 
+	var plant_location = entity.position
+#	change_direction(plant_location.get_angle())
+#	Set direction of motion and have sprite look that way. 
 	# TODO -- Turn this into a call to change_direction.
-	$AnimalSprite.look_at(location)
+#	$AnimalSprite.look_at(location)
 #	$AnimalSprite.rotate(PI/4) # No longer need this?
 	
 
 func stop_eating():
 	eating = false
 	hunger = 0   # Always gets his fill
-	speed = max_speed/2
+	change_speed(null)
 	change_direction(null)
 
 #------------------------------------------------------------------------------
@@ -205,57 +206,49 @@ func _______________________TASKS():
 	pass
 
 """
----- STATUS
+STATUS -----------------------------------------------------------------------
 Movement mostly sorted out now. Speed and direction are primitives, and
 velocity is derived from them. Sprite always faces the direction in which
 the Animal is moving.
 
----- ISSUES
+ISSUES -----------------------------------------------------------------------
 [] If min_speed is zero, some bugs freeze. Due to zeroing the velocity?
 [] Should I include delta in: position += velocity * delta? 
-[] BUG: Animals overshoot when they collide with something. The go over it. 
-	>> Its outer shape is colliding with plants. 
-	>> How do I get it to respond differently to different collision shapes?
+[] BUG: Animals overshoot when they collide with something. They go over it. 
+	>> Its outer shape is colliding with plants. (?)
+	>> The problem increases with speed.
+	>> I have to stop all motion at the moment of contact. 
+	>> AHA! I need to send a signal from touch to Animal, not call a funciton.
+		Function waits until the next _process cycle. The signal is immediate.
 
-
----- DONE
+DONE -------------------------------------------------------------------------
+--- PROJECT: BASIC MOVEMENT
 [x] Animal has a velocity vector and moves based on that.
 [x] TEMP: Animal position wraps around at boundaries
 [x] TEMP: Animal angle of motion changes randomly from time to time.
 [x] Orientation of sprite matches current Animal direction
 [x] Animal varies its speed within specified bounds
-[x] Animal collides with plants as well as animals
 [x] Animal looks toward a plant when it collides with it.
 [x] Start Animal in random direction & random speed
 [x] Initialize velocity directly on speed and direction
 [x] Animal gets nutrition and will starve if it doesn't.
-[x] Recover lost code up to the point of adding vision
-[x] Add a second collision area to Animal for vision
-
-
----- DOING
-[x] Fix the direction changes. 
-[] BUG: Does not approach plants. When it hits them & eats, does not face them.
-
-==== PROJECT: Install the vision system
-[o] STATUS: 
-	Unable to screen out the Animal's own by via Exception list.
-		For now, I just detect the object & then discard it if it's Self. 
-		It is doing that fine now & still recognizing *other* Animals
-	I currently have a Collision2D object, SightCircle, handling detection
-		Can I move the detection up into Animal itself? 
-		  
 [x] Figure out the right kind of object to handle events in this area
-[] Add a round collision object to Animal with radius = vision length
-[] Use a signal to alert the Animal of an entry into the field
-	At the moment, I'm using a method to ask for all the contacts.
-	Next step is to switch to a signal. 
-[] Eliminate all hits that lie outside the animal's cone of vision
+[x] Recover lost code up to the point of adding vision
 
+--- PROJECT: Installing the vision system
+[x] Add a second collision area to Animal for vision
+[x] Add a round collision object to Animal with radius = vision length
+[x] Use a signal to alert the Animal of an entry into the field
+
+
+DOING ------------------------------------------------------------------------
+[] Have senses send messages to Animal rather than calling functions. 
+	We neeed this to get immediate responses. 
+[] Convert vision detection zones to triangular shapes. 
 	 
 
----- TODO
-[] LATER: Convert to a triangular collision shape. Simpler & faster. 
+TODO -------------------------------------------------------------------------
+[] Fix the direction system so I don't have to PI/2 each time. 
 [] Animals ignore plants if they aren't very hungry
 	-- If they hit them, they treat them like an inert object & turn away 
 [] Constrain rotation using modulo & not 4 lines of code.
